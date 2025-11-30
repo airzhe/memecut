@@ -80,8 +80,8 @@ const generateImageBlob = async (
   outputSize: number | 'auto',
   format: 'png' | 'gif'
 ): Promise<Blob> => {
-  let canvasWidth = Math.max(1, rect.w + margins.left + margins.right);
-  let canvasHeight = Math.max(1, rect.h + margins.top + margins.bottom);
+  let canvasWidth = rect.w + margins.left + margins.right;
+  let canvasHeight = rect.h + margins.top + margins.bottom;
 
   if (isSquare) {
       const size = Math.max(canvasWidth, canvasHeight);
@@ -102,18 +102,12 @@ const generateImageBlob = async (
       ctx.clearRect(0, 0, canvasWidth, canvasHeight);
   }
 
-  // Draw Image
-  // Ensure rect width/height are positive to avoid index errors
-  const safeW = Math.max(1, rect.w);
-  const safeH = Math.max(1, rect.h);
-
-  const contentW = safeW + margins.left + margins.right;
-  const contentH = safeH + margins.top + margins.bottom;
-  
+  const contentW = rect.w + margins.left + margins.right;
+  const contentH = rect.h + margins.top + margins.bottom;
   const startX = (canvasWidth - contentW) / 2 + margins.left + offset.x;
   const startY = (canvasHeight - contentH) / 2 + margins.top + offset.y;
 
-  ctx.drawImage(image, rect.x, rect.y, safeW, safeH, startX, startY, safeW, safeH);
+  ctx.drawImage(image, rect.x, rect.y, rect.w, rect.h, startX, startY, rect.w, rect.h);
 
   let finalCanvas = canvas;
   if (typeof outputSize === 'number' && (canvasWidth !== outputSize || canvasHeight !== outputSize)) {
@@ -221,7 +215,7 @@ const Sidebar = ({
     <div className={`bg-white shadow-xl border-r border-gray-200 h-full overflow-y-auto z-30 font-sans transition-all duration-300 ease-in-out flex flex-col shrink-0 ${isOpen ? 'w-full md:w-80 lg:w-96 translate-x-0' : 'w-0 -translate-x-full opacity-0 overflow-hidden'}`}>
       <div className="p-5 flex flex-col gap-5 min-w-[320px]">
         <div className="flex items-center justify-between text-indigo-600 mb-2">
-            <div className="flex items-center gap-2"><Scissors className="w-6 h-6" /><h1 className="text-xl font-bold tracking-tight text-gray-900">Emoji Splitter Pro</h1></div>
+            <div className="flex items-center gap-2"><Scissors className="w-6 h-6" /><h1 className="text-xl font-bold tracking-tight text-gray-900">MemeCut Pro</h1></div>
             <button onClick={toggleSidebar} className="md:hidden p-2 text-gray-500"><ChevronLeft /></button>
         </div>
 
@@ -387,7 +381,7 @@ const SingleAdjustModal = ({
     const [margins, setMargins] = useState<Margins>(result.margins || { top: 0, bottom: 0, left: 0, right: 0 });
     const [offset, setOffset] = useState<{x:number, y:number}>(result.offset || {x:0, y:0});
     const [isSquare, setIsSquare] = useState(result.isSquare !== undefined ? result.isSquare : false);
-    // CHANGED: Default to 'white' instead of 'transparent'
+    // Default to 'white' if no result.bgColor is set
     const [bgColor, setBgColor] = useState(result.bgColor || 'white');
     const [activeTab, setActiveTab] = useState<'crop' | 'layout'>('crop');
     const [isSaving, setIsSaving] = useState(false);
@@ -398,7 +392,7 @@ const SingleAdjustModal = ({
     const [tool, setTool] = useState<'move' | 'pan'>('move'); 
     const canvasRef = useRef<HTMLCanvasElement>(null);
     
-    // CHANGED: Default preference to 'white'
+    // Default preference to 'white'
     const userPrefBgColor = useRef(result.bgColor || 'white');
     const userPrefIsSquare = useRef(result.isSquare || false);
 
