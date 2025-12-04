@@ -1237,7 +1237,7 @@ export const App = () => {
 
     return (
         <div className="fixed inset-0 w-full h-full bg-gray-100 text-gray-900 font-sans selection:bg-indigo-100 selection:text-indigo-700 overflow-hidden flex flex-col">
-            <div className="flex-1 flex justify-center h-full max-w-[1600px] mx-auto bg-white shadow-2xl overflow-hidden relative w-full">
+            <div className="flex-1 flex justify-center h-full mx-auto bg-white shadow-2xl overflow-hidden relative w-full">
                 
                 {/* Mobile Backdrop for Sidebar */}
                 <div 
